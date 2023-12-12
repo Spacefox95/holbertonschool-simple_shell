@@ -31,6 +31,9 @@ int execute_command(char *cmd)
 {
 	pid_t child_pid;
 	int status;
+	int i = 0;
+	char *token, **args;
+	char *delim = " ";
 
 	if (file_exist(cmd) == 1)
 		return (1);
@@ -44,7 +47,21 @@ int execute_command(char *cmd)
 	}
 	if (child_pid == 0)
 	{
-		execve(cmd, (char *[]) {NULL}, (char *[]) {NULL});
+		token = strtok(cmd, delim);
+		*args = malloc(sizeof(char *) * 2);
+
+		if (args == NULL)
+		{
+			perror("Error");
+			return (1);
+		}
+		while (token != NULL)
+		{
+			args[i++] = token;
+			token = strtok(NULL, delim);
+		}
+		args[i] = NULL;
+		execve(args[0], args, NULL);
 		perror("Error");
 		return (1);
 	}
@@ -79,9 +96,6 @@ int main(int argc, char **argv)
 			putchar('\n');
 			return (1);
 		}
-		/*for (i = 0; i < char_read; i++)
-		  printf("%d ", input_buffer[i]);
-		  putchar('\n');*/
 		input_buffer[char_read - 1] = 0;
 		if (execute_command(input_buffer) == 1)
 			printf("echec execute_command\n");

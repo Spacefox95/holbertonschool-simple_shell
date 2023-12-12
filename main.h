@@ -10,8 +10,10 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
+/* PROTOTYPES */
+
+int main (int argc, char **argv);
 int file_exist(char *file);
 int execute_command(char *cmd);
-int main(int argc, char **argv);
 
 #endif
