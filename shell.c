@@ -33,6 +33,7 @@ int execute_command(char *cmd)
 	int status;
 	int i = 0;
 	char *token, **args;
+	char *delim = " ";
 
 	if (file_exist(cmd) == 1)
 		return (1);
@@ -46,7 +47,7 @@ int execute_command(char *cmd)
 	}
 	if (child_pid == 0)
 	{
-		token = strtok(cmd, " ");
+		token = strtok(cmd, delim);
 		*args = malloc(sizeof(char *) * 2);
 
 		if (args == NULL)
@@ -57,7 +58,7 @@ int execute_command(char *cmd)
 		while (token != NULL)
 		{
 			args[i++] = token;
-			token = strtok(NULL, " ");
+			token = strtok(NULL, delim);
 		}
 		args[i] = NULL;
 		execve(args[0], args, NULL);
