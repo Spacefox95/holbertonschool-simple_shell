@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/stat.h>
 /*
  *
@@ -16,24 +17,40 @@ int file_exist(char *file)
 
 	if (stat(file, &st) == 0)
 	{
-		printf(" FOUND\n");
 		return (0);
 	}
 	else
 	{
-		printf("%s NOT FOUND\n", file);
 		perror("Error");
-		return (-1);
+		return (1);
 	}
 
 }
 
 int execute_command(char *cmd)
 {
+	pid_t child_pid;
+	int status;
+
 	if (file_exist(cmd) == -1)
-		return (-1);
-	printf("execution %s\n", cmd);
-	return(0);
+		return (1);
+
+
+	child_pid = fork();
+	if (child_pid == -1)
+	{
+		perror("Error:");
+		return (1);
+	}
+	if (child_pid == 0)
+	{
+		execve(cmd, (char *[]) {NULL}, (char *[]) {NULL});
+	}
+	else
+	{		
+		wait(&status);
+	}
+	return (0);
 }
 
 int main (int argc, char **argv)
