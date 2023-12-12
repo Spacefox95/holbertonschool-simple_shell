@@ -49,13 +49,13 @@ int execute_command(char *cmd)
 		return (1);
 	}
 	else
-	{		
+	{
 		wait(&status);
 	}
 	return (0);
 }
 
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
 	char *input_buffer;
 	size_t size_allocated;
@@ -70,14 +70,14 @@ int main (int argc, char **argv)
 		{
 			fprintf(stderr, "getline failed\n");
 			free(input_buffer);
-			return(1);
+			return (1);
 		}
 
 		if (char_read == SIZE_MAX)
 		{
 			free(input_buffer);
 			putchar('\n');
-			return(1);
+			return (1);
 		}
 		/*for (i = 0; i < char_read; i++)
 		  printf("%d ", input_buffer[i]);
