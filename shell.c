@@ -1,35 +1,40 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/stat.h>
-/*
- *
- *
+#include "main.h"
+
+/**
+ * fill_args - Tokenizes a string into an array of arguments.
+ * @input_buffer: The string to tokenize.
+ * @argv: The array to fill with the tokenized arguments.
+ * Return: The number of arguments filled into the array.
  */
 
-int fill_args(char * chaine, char ***argv)
+
+int fill_args(char *input_buffer, char ***argv)
 {
 	char *token;
 	int ctr = 0;
 
 	*argv = NULL;
 
-	token=strtok(chaine, " \n");
+	token = strtok(input_buffer, " ");
 	while (token != NULL)
 	{
-		(*argv)=realloc((*argv),(ctr + 1) * sizeof(char*));  /* ctr+1 : nombre allocs taille sizeof */
-		(*argv)[ctr]=token;
+		/* ctr+1 : nombre allocs taille sizeof */
+		(*argv) = realloc((*argv), (ctr + 1) * sizeof(char *));
+		(*argv)[ctr] = token;
 		ctr++;
-		token = strtok(NULL, " \n");
+		token = strtok(NULL, " ");
 	}
-	(*argv)=realloc((*argv),(ctr + 1) * sizeof(char*));
+	(*argv) = realloc((*argv), (ctr + 1) * sizeof(char *));
 	(*argv)[ctr] = NULL;
-	return(ctr);
+	return (ctr);
 }
+
+/**
+ * file_exist - Checks if a file exists.
+ * @file: The name of the file to check.
+ * Return: 0 if the file exists, 1 otherwise.
+ */
+
 
 int file_exist(char *file)
 {
@@ -46,6 +51,13 @@ int file_exist(char *file)
 	}
 
 }
+
+/**
+ * execute_command - Executes a command.
+ * @argv: The array of arguments for the command.
+ * Return: 0 on success, 1 on failure.
+ */
+
 
 int execute_command(char *argv[])
 {
@@ -64,7 +76,7 @@ int execute_command(char *argv[])
 	}
 	if (child_pid == 0)
 	{
-		execve(cmd, argv,(char *[]) {NULL});
+		execve(cmd, argv, NULL);
 		perror("Error");
 		return (1);
 	}
@@ -75,25 +87,22 @@ int execute_command(char *argv[])
 	return (0);
 }
 
-int main(int argc, char **argv)
+/**
+ * main - The main function of the shell.
+ *
+ * Return: 0 on success, 1 on failure.
+ */
+
+int main(void)
 {
 	char *input_buffer = NULL;
-	int myargc;
 	char **myargv = NULL;
 	size_t size_allocated;
 	size_t char_read;
-	int i;
 
 	do {
 		printf("#cisfun$ ");
 		char_read = getline(&input_buffer, &size_allocated, stdin);
-
-		if (char_read < 0)
-		{
-			fprintf(stderr, "getline failed\n");
-			free(input_buffer);
-			return (1);
-		}
 
 		if (char_read == 1)
 			continue;
@@ -105,7 +114,7 @@ int main(int argc, char **argv)
 			return (1);
 		}
 		input_buffer[char_read - 1] = 0;
-		myargc=fill_args(input_buffer,&myargv);
+		fill_args(input_buffer, &myargv);
 
 		if (execute_command(myargv) == 1)
 			printf("echec execute_command\n");
