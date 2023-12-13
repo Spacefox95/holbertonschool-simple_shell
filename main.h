@@ -12,8 +12,8 @@
 
 /* PROTOTYPES */
 
-int main (int argc, char **argv);
 int file_exist(char *file);
-int execute_command(char *cmd);
+int execute_command(char *argv[]);
+int fill_args(char *input_buffer, char ***argv);
 
 #endif
