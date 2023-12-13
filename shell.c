@@ -11,6 +11,26 @@
  *
  */
 
+int fill_args(char * chaine, char ***argv)
+{
+	char *token;
+	int ctr = 0;
+
+	*argv = NULL;
+
+	token=strtok(chaine, " \n");
+	while (token != NULL)
+	{
+		(*argv)=realloc((*argv),(ctr + 1) * sizeof(char*));  /* ctr+1 : nombre allocs taille sizeof */
+		(*argv)[ctr]=token;
+		ctr++;
+		token = strtok(NULL, " \n");
+	}
+	(*argv)=realloc((*argv),(ctr + 1) * sizeof(char*));
+	(*argv)[ctr] = NULL;
+	return(ctr);
+}
+
 int file_exist(char *file)
 {
 	struct stat st;
@@ -27,12 +47,11 @@ int file_exist(char *file)
 
 }
 
-int execute_command(char *cmd)
+int execute_command(char *argv[])
 {
 	pid_t child_pid;
 	int status;
-	char *token;
-	char *delim = " ";
+	char *cmd = argv[0];
 
 	if (file_exist(cmd) == 1)
 		return (1);
@@ -45,12 +64,7 @@ int execute_command(char *cmd)
 	}
 	if (child_pid == 0)
 	{
-		token = strtok(cmd, delim);
-		while (token != NULL)
-		{
-			token = strtok(NULL, delim);
-		}
-		execve(cmd, (char *[]) {NULL}, (char *[]) {NULL});
+		execve(cmd, argv,(char *[]) {NULL});
 		perror("Error");
 		return (1);
 	}
@@ -63,7 +77,9 @@ int execute_command(char *cmd)
 
 int main(int argc, char **argv)
 {
-	char *input_buffer;
+	char *input_buffer = NULL;
+	int myargc;
+	char **myargv = NULL;
 	size_t size_allocated;
 	size_t char_read;
 	int i;
@@ -79,6 +95,9 @@ int main(int argc, char **argv)
 			return (1);
 		}
 
+		if (char_read == 1)
+			continue;
+
 		if (char_read == SIZE_MAX)
 		{
 			free(input_buffer);
@@ -86,7 +105,9 @@ int main(int argc, char **argv)
 			return (1);
 		}
 		input_buffer[char_read - 1] = 0;
-		if (execute_command(input_buffer) == 1)
+		myargc=fill_args(input_buffer,&myargv);
+
+		if (execute_command(myargv) == 1)
 			printf("echec execute_command\n");
 
 	} while (strcmp(input_buffer, "exit") != 0);
