@@ -31,13 +31,11 @@ int execute_command(char *cmd)
 {
 	pid_t child_pid;
 	int status;
-	int i = 0;
-	char *token, **args;
+	char *token;
 	char *delim = " ";
 
 	if (file_exist(cmd) == 1)
 		return (1);
-
 
 	child_pid = fork();
 	if (child_pid == -1)
@@ -48,20 +46,11 @@ int execute_command(char *cmd)
 	if (child_pid == 0)
 	{
 		token = strtok(cmd, delim);
-		*args = malloc(sizeof(char *) * 2);
-
-		if (args == NULL)
-		{
-			perror("Error");
-			return (1);
-		}
 		while (token != NULL)
 		{
-			args[i++] = token;
 			token = strtok(NULL, delim);
 		}
-		args[i] = NULL;
-		execve(args[0], args, NULL);
+		execve(cmd, (char *[]) {NULL}, (char *[]) {NULL});
 		perror("Error");
 		return (1);
 	}
