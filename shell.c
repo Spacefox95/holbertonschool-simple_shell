@@ -46,7 +46,7 @@ int file_exist(char *file)
 	}
 	else
 	{
-		perror("Error");
+		perror("./shell");
 		return (1);
 	}
 
@@ -117,9 +117,13 @@ int main(void)
 		fill_args(input_buffer, &myargv);
 
 		if (execute_command(myargv) == 1)
+		{
 			printf("echec execute_command\n");
+			free(myargv);
+		}
 
-	} while (strcmp(input_buffer, "exit") != 0);
+	} 
+	while (strcmp(input_buffer, "exit") != 0);
 	free(input_buffer);
 	return (0);
 }
