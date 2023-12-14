@@ -106,6 +106,11 @@ int main(void)
 
 		if (char_read == 1)
 			continue;
+		if (char_read == -1 || char_read == EOF) 
+		{
+			free(input_buffer);
+			perror("Error");
+		}
 
 		if (char_read == SIZE_MAX)
 		{
