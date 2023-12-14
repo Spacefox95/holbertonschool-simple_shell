@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
 	}
 
 	do {
+		if (isatty(STDIN_FILENO))
 		printf("#checker_rebels$ ");
 		char_read = getline(&input_buffer, &size_allocated, stdin);
 
@@ -119,8 +120,6 @@ int main(int argc, char *argv[])
 		if (char_read == -1 || char_read == EOF)
 		{
 			free(input_buffer);
-			if (isatty(STDIN_FILENO))
-				putchar('\n');
 			return (1);
 		}
 		input_buffer[char_read - 1] = 0;
