@@ -10,21 +10,20 @@
 char **fill_args(char *input_buffer)
 {
 	int i = 0;
-	char *tmp = malloc(strlen(input_buffer) + 1);
 	char *token;
-	char **args = malloc(sizeof(char *) * 10);
+	char **args = NULL;
 
-	strcpy(tmp, input_buffer);
-	token = strtok(tmp, " ");
+	token = strtok(input_buffer, " ");
 	while (token)
 	{
-		args[i] = malloc(sizeof(char *) + 5);
-		strcpy(args[i], token);
+		args = realloc(args, (i + 1) * sizeof(char *));
+		args[i] = token;
 		token = strtok(NULL, " ");
 		i++;
 	}
+	
+	args = realloc(args, (i + 1) * sizeof(char *));
 	args[i] = NULL;
-	free(tmp);
 	return (args);
 }
 
@@ -70,7 +69,7 @@ int execute_command(char **argv)
 	child_pid = fork();
 	if (child_pid == -1)
 	{
-		perror("Error");
+		perror("./shell");
 		return (1);
 	}
 	if (child_pid == 0)
@@ -93,35 +92,41 @@ int execute_command(char **argv)
  * Return: 0 on success, 1 on failure.
  */
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	char *input_buffer = NULL;
-	char **myargv = NULL;
-	char **args = malloc(sizeof(char *) * 10);
+	char **myargv;
 	size_t size_allocated;
 	int char_read;
 	int do_not_exit = 1;
 
-	if (argc > 0)
-	{
-		do {
+
+	do {
+		if (isatty(STDIN_FILENO))
+			printf("#checker_rebels$ ");
+
+		char_read = getline(&input_buffer, &size_allocated, stdin);
+
+		if (char_read == EOF)
+		{
+			free(input_buffer);
 			if (isatty(STDIN_FILENO))
-				printf("#checker_rebels$ ");
-			char_read = getline(&input_buffer, &size_allocated, stdin);
+				  putchar('\n');
+			return (1);
+		}
 
-			if (char_read == -1)
-			{
-				free(input_buffer);
-				return (1);
-			}
-			input_buffer[char_read - 1] = 0;
-			args = fill_args(input_buffer);
-			execute_command(args);
-			free(myargv);
-			do_not_exit = strcmp(input_buffer, "exit");
+		input_buffer[char_read - 1] = 0;
+		myargv = fill_args(input_buffer);
 
-		} while (do_not_exit != 1);
-		free(input_buffer);
-		return (0);
-	}
+		do_not_exit = strcmp(input_buffer, "exit");
+		
+		if (do_not_exit != 0)
+			execute_command(myargv);
+
+		free(myargv);
+
+	} while (do_not_exit != 0);
+	free(input_buffer);
+	return (0);
 }
+
