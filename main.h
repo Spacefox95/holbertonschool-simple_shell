@@ -14,6 +14,6 @@
 
 int file_exist(char *file);
 int execute_command(char *argv[]);
-int fill_args(char *input_buffer, char ***argv);
+char **fill_args(char *input_buffer);
 
 #endif
