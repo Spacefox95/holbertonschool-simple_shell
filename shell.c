@@ -91,7 +91,8 @@ int execute_command(char *argv[])
 
 /**
  * main - The main function of the shell.
- *
+ * @argc: number of arguments
+ * @argv: value of the arguments
  * Return: 0 on success, 1 on failure.
  */
 
@@ -101,6 +102,7 @@ int main(int argc, char *argv[])
 	char **myargv = NULL;
 	size_t size_allocated;
 	int char_read;
+	int do_not_exit = 1;
 
 	if (argc > 0)
 	{
@@ -116,22 +118,18 @@ int main(int argc, char *argv[])
 
 		if (char_read == -1 || char_read == EOF)
 		{
-			perror("./shell");
 			free(input_buffer);
-			putchar('\n');
+			if (isatty(STDIN_FILENO))
+				putchar('\n');
 			return (1);
 		}
 		input_buffer[char_read - 1] = 0;
 		fill_args(input_buffer, &myargv);
+		execute_command(myargv);
+		free(myargv);
+		do_not_exit = strcmp(input_buffer, "exit");
 
-		if (execute_command(myargv) == 1)
-		{
-			printf("echec execute_command\n");
-			free(myargv);
-		}
-
-	} 
-	while (strcmp(input_buffer, "exit") != 0);
+	} while (do_not_exit != 1);
 	free(input_buffer);
 	return (0);
 }
