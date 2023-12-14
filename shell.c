@@ -1,5 +1,7 @@
 #include "main.h"
 
+char *program_name;
+
 /**
  * fill_args - Tokenizes a string into an array of arguments.
  * @input_buffer: The string to tokenize.
@@ -93,27 +95,28 @@ int execute_command(char *argv[])
  * Return: 0 on success, 1 on failure.
  */
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	char *input_buffer = NULL;
 	char **myargv = NULL;
 	size_t size_allocated;
-	size_t char_read;
+	int char_read;
+
+	if (argc > 0)
+	{
+		program_name = argv[0];
+	}
 
 	do {
-		printf("#cisfun$ ");
+		printf("#checker_rebels$ ");
 		char_read = getline(&input_buffer, &size_allocated, stdin);
 
 		if (char_read == 1)
 			continue;
-		if (char_read == -1 || char_read == EOF) 
-		{
-			free(input_buffer);
-			perror("Error");
-		}
 
-		if (char_read == SIZE_MAX)
+		if (char_read == -1 || char_read == EOF)
 		{
+			perror("./shell");
 			free(input_buffer);
 			putchar('\n');
 			return (1);
