@@ -17,12 +17,22 @@ char **fill_args(char *input_buffer)
 	while (token)
 	{
 		args = realloc(args, (i + 1) * sizeof(char *));
+		if (!args)
+		{
+			fprintf(stderr, "Error allocating memory");
+			return (1);
+		}
 		args[i] = token;
 		token = strtok(NULL, " ");
 		i++;
 	}
 
 	args = realloc(args, (i + 1) * sizeof(char *));
+	if (!args)
+	{
+		fprintf(stderr, "Error allocating memory");
+		return (1);
+	}
 	args[i] = NULL;
 	return (args);
 }
