@@ -1,34 +1,30 @@
 #include "main.h"
 
-char *program_name;
-
 /**
  * fill_args - Tokenizes a string into an array of arguments.
  * @input_buffer: The string to tokenize.
- * @argv: The array to fill with the tokenized arguments.
  * Return: The number of arguments filled into the array.
  */
 
 
-int fill_args(char *input_buffer, char ***argv)
+char **fill_args(char *input_buffer)
 {
+	int i = 0;
 	char *token;
-	int ctr = 0;
-
-	*argv = NULL;
+	char **args = NULL;
 
 	token = strtok(input_buffer, " ");
-	while (token != NULL)
+	while (token)
 	{
-		/* ctr+1 : nombre allocs taille sizeof */
-		(*argv) = realloc((*argv), (ctr + 1) * sizeof(char *));
-		(*argv)[ctr] = token;
-		ctr++;
+		args = realloc(args, (i + 1) * sizeof(char *));
+		args[i] = token;
 		token = strtok(NULL, " ");
+		i++;
 	}
-	(*argv) = realloc((*argv), (ctr + 1) * sizeof(char *));
-	(*argv)[ctr] = NULL;
-	return (ctr);
+
+	args = realloc(args, (i + 1) * sizeof(char *));
+	args[i] = NULL;
+	return (args);
 }
 
 /**
@@ -61,7 +57,7 @@ int file_exist(char *file)
  */
 
 
-int execute_command(char *argv[])
+int execute_command(char **argv)
 {
 	pid_t child_pid;
 	int status;
@@ -73,13 +69,13 @@ int execute_command(char *argv[])
 	child_pid = fork();
 	if (child_pid == -1)
 	{
-		perror("Error");
+		perror("./shell");
 		return (1);
 	}
 	if (child_pid == 0)
 	{
 		execve(cmd, argv, NULL);
-		perror("Error");
+		perror("./shell");
 		return (1);
 	}
 	else
@@ -96,39 +92,41 @@ int execute_command(char *argv[])
  * Return: 0 on success, 1 on failure.
  */
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	char *input_buffer = NULL;
-	char **myargv = NULL;
+	char **myargv;
 	size_t size_allocated;
 	int char_read;
 	int do_not_exit = 1;
 
-	if (argc > 0)
-	{
-		program_name = argv[0];
-	}
 
 	do {
 		if (isatty(STDIN_FILENO))
-		printf("#checker_rebels$ ");
+			printf("#checker_rebels$ ");
+
 		char_read = getline(&input_buffer, &size_allocated, stdin);
 
-		if (char_read == 1)
-			continue;
-
-		if (char_read == -1 || char_read == EOF)
+		if (char_read == EOF)
 		{
 			free(input_buffer);
+			if (isatty(STDIN_FILENO))
+				putchar('\n');
 			return (1);
 		}
+
 		input_buffer[char_read - 1] = 0;
-		fill_args(input_buffer, &myargv);
-		execute_command(myargv);
-		free(myargv);
+		myargv = fill_args(input_buffer);
+
 		do_not_exit = strcmp(input_buffer, "exit");
 
-	} while (do_not_exit != 1);
+		if (do_not_exit != 0)
+			execute_command(myargv);
+
+		free(myargv);
+
+	} while (do_not_exit != 0);
 	free(input_buffer);
 	return (0);
 }
+
