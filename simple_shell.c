@@ -20,7 +20,7 @@ char **fill_args(char *input_buffer)
 		if (!args)
 		{
 			fprintf(stderr, "Error allocating memory");
-			return (1);
+			exit(EXIT_FAILURE);
 		}
 		args[i] = token;
 		token = strtok(NULL, " ");
@@ -31,7 +31,7 @@ char **fill_args(char *input_buffer)
 	if (!args)
 	{
 		fprintf(stderr, "Error allocating memory");
-		return (1);
+		exit(EXIT_FAILURE);
 	}
 	args[i] = NULL;
 	return (args);
