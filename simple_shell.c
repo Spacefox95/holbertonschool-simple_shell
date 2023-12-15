@@ -21,7 +21,7 @@ char **fill_args(char *input_buffer)
 		token = strtok(NULL, " ");
 		i++;
 	}
-	
+
 	args = realloc(args, (i + 1) * sizeof(char *));
 	args[i] = NULL;
 	return (args);
@@ -39,15 +39,49 @@ int file_exist(char *file)
 	struct stat st;
 
 	if (stat(file, &st) == 0)
-	{
 		return (0);
-	}
-	else
+
+	return (1);
+}
+
+/**
+ * find_cmd_path - finds full path of a command in PATH environment variable.
+ * @cmd: The command to find
+ * @work_buffer: The buffer to store the full path.
+ * Return: 0 if the command is found, 1 otherwise.
+ */
+
+int find_cmd_path(char *cmd, char *work_buffer)
+{
+	char *token;
+	char *var_path;
+
+	var_path = strdup(getenv("PATH"));
+	if (var_path == NULL)
 	{
 		perror("./shell");
 		return (1);
 	}
 
+	token = strtok(var_path, ":");
+
+	while (token)
+	{
+		if (sprintf(work_buffer, "%s/%s", token, cmd) < 0)
+		{
+			free(var_path);
+			return (1);
+		}
+
+		if (file_exist(work_buffer) == 0)
+		{
+			free(var_path);
+			return (0);
+		}
+		token = strtok(NULL, ":");
+	}
+	free(var_path);
+	return (1);
 }
 
 /**
@@ -61,11 +95,26 @@ int execute_command(char **argv)
 {
 	pid_t child_pid;
 	int status;
-	char *cmd = argv[0];
+	char *cmd = argv[0], *work_buffer;
 
-	if (file_exist(cmd) == 1)
+	work_buffer = malloc(1024);
+	if (work_buffer == NULL)
+	{
+		perror("./shell");
 		return (1);
-
+	}
+	/*init avec valeur reçue*/
+	strcpy(work_buffer, cmd);
+	/* Si la commande commence par un chemin (/ ou .) : exécution directe */
+	if (cmd[0] != '/' && strncmp(cmd, "./", 2) > 0)
+	{
+		if (find_cmd_path(cmd, work_buffer) == 1)
+		{
+			free(work_buffer);
+			perror("./shell");
+			return (1);
+		}
+	}
 	child_pid = fork();
 	if (child_pid == -1)
 	{
@@ -74,21 +123,19 @@ int execute_command(char **argv)
 	}
 	if (child_pid == 0)
 	{
-		execve(cmd, argv, NULL);
+		execve(work_buffer, argv, NULL);
 		perror("./shell");
 		return (1);
 	}
 	else
 	{
 		wait(&status);
+		free(work_buffer);
 	}
 	return (0);
 }
-
 /**
  * main - The main function of the shell.
- * @argc: number of arguments
- * @argv: value of the arguments
  * Return: 0 on success, 1 on failure.
  */
 
@@ -103,7 +150,7 @@ int main(void)
 
 	do {
 		if (isatty(STDIN_FILENO))
-			printf("#checker_rebels$ ");
+			printf("#simple_shell$ ");
 
 		char_read = getline(&input_buffer, &size_allocated, stdin);
 
@@ -111,7 +158,7 @@ int main(void)
 		{
 			free(input_buffer);
 			if (isatty(STDIN_FILENO))
-				  putchar('\n');
+				putchar('\n');
 			return (1);
 		}
 
@@ -119,7 +166,7 @@ int main(void)
 		myargv = fill_args(input_buffer);
 
 		do_not_exit = strcmp(input_buffer, "exit");
-		
+
 		if (do_not_exit != 0)
 			execute_command(myargv);
 
