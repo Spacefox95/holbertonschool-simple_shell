@@ -12,6 +12,7 @@
 
 /* PROTOTYPES */
 
+int find_cmd_path(char *cmd, char *work_buffer);
 int file_exist(char *file);
 int execute_command(char *argv[]);
 char **fill_args(char *input_buffer);
