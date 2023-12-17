@@ -14,7 +14,7 @@
 
 int find_cmd_path(char *cmd, char *work_buffer);
 int file_exist(char *file);
-int execute_command(char *argv[]);
+int execute_command(char *argv[], char *envp[]);
 char **fill_args(char *input_buffer);
 void print_env(char *envp[]);
 int shell_error(void);

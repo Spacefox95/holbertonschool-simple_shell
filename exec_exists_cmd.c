@@ -57,12 +57,13 @@ int find_cmd_path(char *cmd, char *work_buffer)
 
 /**
  * execute_command - Executes a command.
+ * @envp: environment.
  * @argv: The array of arguments for the command.
  * Return: 0 on success, 1 on failure.
  */
 
 
-int execute_command(char **argv)
+int execute_command(char **argv, char **envp)
 {
 	pid_t child_pid;
 	int status;
@@ -71,11 +72,12 @@ int execute_command(char **argv)
 	work_buffer = malloc(1024);
 	if (work_buffer == NULL)
 		return (shell_error());
-
-	/*init avec valeur reçue*/
-	strcpy(work_buffer, cmd);
-	/* Si la commande commence par un chemin (/ ou ./) : exécution directe */
-	if (cmd[0] != '/' && strncmp(cmd, "./", 2) > 0)
+	if (strcpy(work_buffer, cmd) != work_buffer)/*init avec valeur reçue*/
+	{
+		free(work_buffer);
+		return (shell_error());
+	}
+	if (cmd[0] != '/' && strncmp(cmd, "./", 2) > 0)/* / ./: exec direct*/
 	{
 		if (find_cmd_path(cmd, work_buffer) == 1)
 		{
@@ -85,12 +87,17 @@ int execute_command(char **argv)
 	}
 	child_pid = fork();
 	if (child_pid == -1)
+	{
+		free(work_buffer);
 		return (shell_error());
-
+	}
 	if (child_pid == 0)
 	{
-		execve(work_buffer, argv, NULL);
-		return (shell_error());
+		if (execve(work_buffer, argv, envp) == -1)
+		{
+			free(work_buffer);
+			return (shell_error());
+		}
 	}
 	else
 	{
