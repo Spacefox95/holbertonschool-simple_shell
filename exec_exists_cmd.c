@@ -1,31 +1,5 @@
 #include "main.h"
 
-/**
- * fill_args - Tokenizes a string into an array of arguments.
- * @input_buffer: The string to tokenize.
- * Return: The number of arguments filled into the array.
- */
-
-
-char **fill_args(char *input_buffer)
-{
-	int i = 0;
-	char *token;
-	char **args = NULL;
-
-	token = strtok(input_buffer, " ");
-	while (token)
-	{
-		args = realloc(args, (i + 1) * sizeof(char *));
-		args[i] = token;
-		token = strtok(NULL, " ");
-		i++;
-	}
-
-	args = realloc(args, (i + 1) * sizeof(char *));
-	args[i] = NULL;
-	return (args);
-}
 
 /**
  * file_exist - Checks if a file exists.
@@ -58,10 +32,7 @@ int find_cmd_path(char *cmd, char *work_buffer)
 
 	var_path = strdup(getenv("PATH"));
 	if (var_path == NULL)
-	{
-		perror("./shell");
-		return (1);
-	}
+		return (shell_error());
 
 	token = strtok(var_path, ":");
 
@@ -99,33 +70,27 @@ int execute_command(char **argv)
 
 	work_buffer = malloc(1024);
 	if (work_buffer == NULL)
-	{
-		perror("./shell");
-		return (1);
-	}
+		return (shell_error());
+
 	/*init avec valeur reçue*/
 	strcpy(work_buffer, cmd);
-	/* Si la commande commence par un chemin (/ ou .) : exécution directe */
+	/* Si la commande commence par un chemin (/ ou ./) : exécution directe */
 	if (cmd[0] != '/' && strncmp(cmd, "./", 2) > 0)
 	{
 		if (find_cmd_path(cmd, work_buffer) == 1)
 		{
 			free(work_buffer);
-			perror("./shell");
-			return (1);
+			return (shell_error());
 		}
 	}
 	child_pid = fork();
 	if (child_pid == -1)
-	{
-		perror("./shell");
-		return (1);
-	}
+		return (shell_error());
+
 	if (child_pid == 0)
 	{
 		execve(work_buffer, argv, NULL);
-		perror("./shell");
-		return (1);
+		return (shell_error());
 	}
 	else
 	{
@@ -134,46 +99,3 @@ int execute_command(char **argv)
 	}
 	return (0);
 }
-/**
- * main - The main function of the shell.
- * Return: 0 on success, 1 on failure.
- */
-
-int main(void)
-{
-	char *input_buffer = NULL;
-	char **myargv;
-	size_t size_allocated;
-	int char_read;
-	int do_not_exit = 1;
-
-
-	do {
-		if (isatty(STDIN_FILENO))
-			printf("#simple_shell$ ");
-
-		char_read = getline(&input_buffer, &size_allocated, stdin);
-
-		if (char_read == EOF)
-		{
-			free(input_buffer);
-			if (isatty(STDIN_FILENO))
-				putchar('\n');
-			return (1);
-		}
-
-		input_buffer[char_read - 1] = 0;
-		myargv = fill_args(input_buffer);
-
-		do_not_exit = strcmp(input_buffer, "exit");
-
-		if (do_not_exit != 0)
-			execute_command(myargv);
-
-		free(myargv);
-
-	} while (do_not_exit != 0);
-	free(input_buffer);
-	return (0);
-}
-
