@@ -19,7 +19,7 @@ int main(int argc, char *argv[], char *envp[])
 
 	do {
 		if (isatty(STDIN_FILENO))
-			printf("#simple_shell$ ");
+			printf("\033[0;39m#simple_shell$ ");
 
 		char_read = getline(&input_buffer, &size_allocated, stdin);
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[], char *envp[])
 		do_not_exit = strcmp(input_buffer, "exit");
 
 		if (do_not_exit != 0)
-			execute_command(myargv);
+			execute_command(myargv, envp);
 
 		free(myargv);
 	} while (do_not_exit != 0);
