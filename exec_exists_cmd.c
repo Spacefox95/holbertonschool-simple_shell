@@ -96,7 +96,7 @@ int execute_command(char **argv, char **envp)
 		if (execve(work_buffer, argv, envp) == -1)
 		{
 			free(work_buffer);
-			exit (shell_error());
+			return (shell_error());
 		}
 	}
 	else

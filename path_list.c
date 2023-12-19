@@ -10,16 +10,16 @@ struct node *create_path_dir_list(char *path)
 	struct node *tail = NULL;
 
 	char *dir = strtok(path, ":");
-	struct node *new_node;
 
 	while (dir != NULL)
 	{
-		new_node = malloc(sizeof(struct node));
+		struct node *new_node = (struct node*) malloc(sizeof(struct node));
 		if (new_node == NULL)
 		{
-			fprintf(stderr, "memory allocation error\n");
-			return (NULL);
-		}
+			fprintf(stderr, "MEmory allocation error\n");
+
+		
+		
 		new_node->dir = strdup(dir);
 		new_node->next = NULL;
 
