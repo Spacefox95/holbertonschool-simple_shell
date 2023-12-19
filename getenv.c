@@ -9,7 +9,6 @@
 char *_getenv(const char *name)
 {
 	int i;
-	extern char **environ;
 	size_t name_len;
 
 	if (name == NULL || environ == NULL)

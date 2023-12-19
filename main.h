@@ -10,13 +10,16 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
+/* GLOBAL VARIABLE */
+
+extern char **environ;
+
 /* LINKED LIST STRUCT */
 
 struct node {
 	char *dir;
 	struct node *next;
 };
-
 
 /* PROTOTYPES */
 
