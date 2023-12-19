@@ -19,7 +19,7 @@ int main(int argc, char *argv[], char *envp[])
 
 	do {
 		if (isatty(STDIN_FILENO))
-			printf("\033[0;39m#simple_shell$ ");
+			printf("\033[0;39m#simple_shell(%d)$ ", getpid());
 
 		char_read = getline(&input_buffer, &size_allocated, stdin);
 
