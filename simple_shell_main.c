@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
 	(void) argc;
 	(void) argv;
 
+	signal(SIGINT, SIG_IGN);
 	do {
 		if (isatty(STDIN_FILENO))
 			printf("\033[0;39m#simple_shell(%d)$ ", getpid());
@@ -41,7 +42,7 @@ int main(int argc, char *argv[])
 		if (strcmp(input_buffer, "exit") == 0)
 		{
 			free(input_buffer);
-			return (EXIT_SUCCESS);  /* sortie du shell avec exit */
+			return (ret);  /* sortie du shell avec exit */
 		}
 		myargv = fill_args(input_buffer);
 		ret = execute_command(myargv); /* ret=127 si command not found */
