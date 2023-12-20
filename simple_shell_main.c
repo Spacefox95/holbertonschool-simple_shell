@@ -4,25 +4,23 @@
  * main - The main function of the shell.
  * @argc: number of arguments
  * @argv: arguments
- * @envp: environment
- * Return: 0 on success, 1 on failure.
+ * Return: EXIT_SUCCESS on success, EXIT_FAILURE on failure.
  */
 
-int main(int argc, char *argv[], char *envp[])
+int main(int argc, char *argv[])
 {
 	char *input_buffer = NULL, **myargv;
 	size_t size_allocated;
-	int char_read, do_not_exit = 1;
+	int char_read, ret = EXIT_SUCCESS;
 
 	(void) argc;
 	(void) argv;
 
 	do {
 		if (isatty(STDIN_FILENO))
-			printf("\033[0;39m#simple_shell$ ");
+			printf("\033[0;39m#simple_shell(%d)$ ", getpid());
 
 		char_read = getline(&input_buffer, &size_allocated, stdin);
-
 		if (char_read == 1)
 			continue;
 		if (char_read == EOF)
@@ -30,24 +28,25 @@ int main(int argc, char *argv[], char *envp[])
 			free(input_buffer);
 			if (isatty(STDIN_FILENO))
 				putchar('\n');
-			return (1);
+			return (ret);   /* sortie du shell Ctrl-D */
 		}
 
-		input_buffer[char_read - 1] = 0;
+		input_buffer[char_read - 1] = 0; /* overwrite \n */
 		if (strcmp(input_buffer, "env") == 0)
 		{
-			print_env(envp);
+			print_env();
 			continue;
+		}
+		if (strcmp(input_buffer, "exit") == 0)
+		{
+			free(input_buffer);
+			return (EXIT_SUCCESS);  /* sortie du shell avec exit */
 		}
 
 		myargv = fill_args(input_buffer);
-		do_not_exit = strcmp(input_buffer, "exit");
-
-		if (do_not_exit != 0)
-			execute_command(myargv, envp);
-
+		ret = execute_command(myargv); /* ret=127 si command not found */
 		free(myargv);
-	} while (do_not_exit != 0);
-	free(input_buffer);
-	return (0);
+
+	} while (1);
+	/* never reached */
 }
