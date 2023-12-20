@@ -42,12 +42,11 @@ int main(int argc, char *argv[])
 		if (strcmp(input_buffer, "exit") == 0)
 		{
 			free(input_buffer);
-			return (2);  /* sortie du shell avec exit */
+			return (ret);  /* sortie du shell avec exit */
 		}
 		myargv = fill_args(input_buffer);
 		ret = execute_command(myargv); /* ret=127 si command not found */
 		free(myargv);
 
 	} while (1);
-	/* never reached */
 }
