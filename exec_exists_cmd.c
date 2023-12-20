@@ -101,7 +101,5 @@ int execute_command(char **argv)
 	}
 	wait(&status);
 	free(work_buffer);
-	if (status != 0)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+	return (WEXITSTATUS(status));
 }
