@@ -9,16 +9,21 @@
 
 char **fill_args(char *input_buffer)
 {
-	int i = 0;
+	int i = 0, len;
 	char *token;
 	char **argv = NULL;
 
-	token = strtok(input_buffer, " ");
+	token = strtok(input_buffer, " \t\r\n");
 	while (token)
 	{
 		argv = realloc(argv, (i + 1) * sizeof(char *));
+		if (token[0] == '"')
+			token++;
+		len = strlen(token);
+		if (token[len - 1] == '"')
+			token[len - 1] = '\0';
 		argv[i] = token;
-		token = strtok(NULL, " ");
+		token = strtok(NULL, " \t\r\n");
 		i++;
 	}
 

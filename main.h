@@ -25,10 +25,12 @@ struct node {
 
 int find_cmd_path(char *cmd, char *work_buffer);
 int file_exist(char *file);
-int execute_command(char *argv[], char *envp[]);
+int execute_command(char *argv[]);
 char **fill_args(char *input_buffer);
-void print_env(char *envp[]);
+void print_env(void);
 int shell_error(void);
 char *_getenv(const char *name);
+struct node *create_path_dir_list(char *path);
+void free_path_list(struct node *head);
 
 #endif

@@ -9,5 +9,5 @@
 int shell_error(void)
 {
 	perror("./shell");
-	return (1);
+	return (EXIT_FAILURE);
 }

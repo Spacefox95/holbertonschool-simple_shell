@@ -6,13 +6,13 @@
  * Return: void
  */
 
-void print_env(char *envp[])
+void print_env(void)
 {
 	int ctr_env = 0;
 
-	while (envp[ctr_env] != NULL)
+	while (environ[ctr_env] != NULL)
 	{
-		printf("%s\n", envp[ctr_env]);
+		printf("%s\n", environ[ctr_env]);
 		ctr_env++;
 	}
 }

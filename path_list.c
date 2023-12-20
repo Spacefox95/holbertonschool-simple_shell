@@ -66,3 +66,31 @@ struct node *create_path_dir_list(char *path)
 	}
 	return (head);
 }
+
+char *find_executable(struct node *path_list, const char *command)
+{
+	char *path;
+	
+	while (path_list != NULL) 
+	{
+		path = malloc(strlen(path_list->dir) + strlen(command) + 2);
+
+		if (path == NULL) 
+		{
+			fprintf(stderr, "Memory allocation error\n");
+			return (NULL);
+		}
+
+		sprintf(path, "%s/%s", path_list->dir, command);
+
+		if (access(path, X_OK) == 0) 
+		{
+			return (path);
+		}
+
+		free(path);
+		path_list = path_list->next;
+	}
+
+	return (NULL);
+}

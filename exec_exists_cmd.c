@@ -7,15 +7,14 @@
  * Return: 0 if the file exists, 1 otherwise.
  */
 
-
 int file_exist(char *file)
 {
 	struct stat st;
 
 	if (stat(file, &st) == 0)
-		return (0);
+		return (EXIT_SUCCESS);
 
-	return (1);
+	return (EXIT_FAILURE);
 }
 
 /**
@@ -27,31 +26,23 @@ int file_exist(char *file)
 
 int find_cmd_path(char *cmd, char *work_buffer)
 {
-	char *token;
-	char *var_path;
-
-	var_path = strdup(getenv("PATH"));
-	if (var_path == NULL)
-		return (shell_error());
-
-	token = strtok(var_path, ":");
-
-	while (token)
+	struct node *path_list = create_path_dir_list();
+	while (path_list != NULL)
 	{
-		if (sprintf(work_buffer, "%s/%s", token, cmd) < 0)
+		if (sprintf(work_buffer, "%s/%s", path_list->dir, cmd) < 0)
 		{
-			free(var_path);
+			free_path_list(path_list);
 			return (1);
 		}
 
 		if (file_exist(work_buffer) == 0)
 		{
-			free(var_path);
 			return (0);
 		}
-		token = strtok(NULL, ":");
+
+		path_list = path_list->next;
 	}
-	free(var_path);
+
 	return (1);
 }
 
@@ -63,7 +54,7 @@ int find_cmd_path(char *cmd, char *work_buffer)
  */
 
 
-int execute_command(char **argv, char **envp)
+int execute_command(char **argv)
 {
 	pid_t child_pid;
 	int status;
@@ -72,18 +63,17 @@ int execute_command(char **argv, char **envp)
 	work_buffer = malloc(1024);
 	if (work_buffer == NULL)
 		return (shell_error());
-	if (strcpy(work_buffer, cmd) != work_buffer)/*init avec valeur reçue*/
+
+	if (strcpy(work_buffer, cmd) != work_buffer) /*init avec valeur reçue*/
 	{
 		free(work_buffer);
 		return (shell_error());
 	}
-	if (cmd[0] != '/' && strncmp(cmd, "./", 2) > 0)/* / ./: exec direct*/
+	if (find_cmd_path(cmd, work_buffer) == EXIT_FAILURE)
 	{
-		if (find_cmd_path(cmd, work_buffer) == 1)
-		{
-			free(work_buffer);
-			return (shell_error());
-		}
+		free(work_buffer);
+		perror("./shell");
+		return (127); /* ret=127 si command not found */
 	}
 	child_pid = fork();
 	if (child_pid == -1)
@@ -93,10 +83,12 @@ int execute_command(char **argv, char **envp)
 	}
 	if (child_pid == 0)
 	{
-		if (execve(work_buffer, argv, envp) == -1)
+		if (execve(work_buffer, argv, environ) == -1)
 		{
 			free(work_buffer);
 			return (shell_error());
+			perror("./shell");
+			exit(EXIT_FAILURE);
 		}
 	}
 	else
@@ -104,5 +96,5 @@ int execute_command(char **argv, char **envp)
 		wait(&status);
 		free(work_buffer);
 	}
-	return (0);
+	return (EXIT_SUCCESS);
 }
