@@ -96,10 +96,13 @@ int execute_command(char **argv)
 		{
 			free(work_buffer);
 			perror("./shell - not found");
-			exit(EXIT_FAILURE);
+			exit(127);
 		}
+		exit(EXIT_SUCCESS);
 	}
 	wait(&status);
 	free(work_buffer);
-	return (WEXITSTATUS(status));
+	if (WIFEXITED(status))
+		status = WEXITSTATUS(status);
+	return (status);
 }
