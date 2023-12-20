@@ -63,7 +63,6 @@ int find_cmd_path(char *cmd, char *work_buffer)
  * Return: EXIT_SUCCESS on success, EXIT_FAILURE on failure.
  */
 
-
 int execute_command(char **argv)
 {
 	pid_t child_pid;
@@ -82,7 +81,7 @@ int execute_command(char **argv)
 	if (find_cmd_path(cmd, work_buffer) == EXIT_FAILURE)
 	{
 		free(work_buffer);
-		perror("./shell");
+		perror("./shell - not found");
 		return (127); /* ret=127 si command not found */
 	}
 	child_pid = fork();
@@ -96,15 +95,13 @@ int execute_command(char **argv)
 		if (execve(work_buffer, argv, environ) == -1)
 		{
 			free(work_buffer);
-			return (shell_error());
-			perror("./shell");
+			perror("./shell - not found");
 			exit(EXIT_FAILURE);
 		}
 	}
-	else
-	{
-		wait(&status);
-		free(work_buffer);
-	}
+	wait(&status);
+	free(work_buffer);
+	if (status != 0)
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
