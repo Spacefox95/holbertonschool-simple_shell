@@ -98,7 +98,7 @@ int execute_command(char **argv)
 			perror("./shell - not found");
 			exit(127);
 		}
-		exit(EXIT_SUCCESS);
+		exit(127);
 	}
 	wait(&status);
 	free(work_buffer);
