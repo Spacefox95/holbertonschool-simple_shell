@@ -26,16 +26,15 @@ struct node *create_path_dir_list(char *path)
 {
 	struct node *head = NULL;
 	struct node *tail = NULL;
-	char *dir;
+	char *token;
 
-	path = _getenv("PATH");
 	if (path == NULL)
 	{
 		fprintf(stderr, "PATH environnement variable not found\n");
 		return (NULL);
 	}
-	dir = strtok(path, ":");
-	while (dir != NULL)
+	token = strtok(path, ":");
+	while (token != NULL)
 	{
 		struct node *new_node = (struct node *) malloc(sizeof(struct node));
 		if (new_node == NULL)
@@ -44,7 +43,7 @@ struct node *create_path_dir_list(char *path)
 			free_path_list(head);
 			return (NULL);
 		}
-		new_node->dir = strdup(dir);
+		new_node->dir = strdup(token);
 		if (new_node->dir == NULL)
 		{
 			fprintf(stderr, "Memory allocation error\n");
@@ -63,7 +62,7 @@ struct node *create_path_dir_list(char *path)
 			tail->next = new_node;
 			tail = new_node;
 		}
-		dir = strtok(NULL, ":");
+		token = strtok(NULL, ":");
 	}
 	return (head);
 }
