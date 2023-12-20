@@ -1,28 +1,58 @@
 #include "main.h"
 
-/*
- *
+/**
+ * free_path_list - function that free the linked list
+ * @head: the head of the list
+ */
+
+void free_path_list(struct node *head)
+{
+	while (head != NULL)
+	{
+		struct node *temp = head;
+		head = head->next;
+		free(temp->dir);
+		free(temp);
+	}
+}
+
+/** 
+ * create_path_dir_list - create a list of directories in the path
+ * @path: the path
+ * Return: NULL if fail, the first node otherwise
  */
 
 struct node *create_path_dir_list(char *path)
 {
 	struct node *head = NULL;
 	struct node *tail = NULL;
+	char *dir;
 
-	char *dir = strtok(path, ":");
-
+	path = _getenv("PATH");
+	if (path == NULL)
+	{
+		fprintf(stderr, "PATH environnement variable not found\n");
+		return (NULL);
+	}
+	dir = strtok(path, ":");
 	while (dir != NULL)
 	{
-		struct node *new_node = (struct node*) malloc(sizeof(struct node));
+		struct node *new_node = (struct node *) malloc(sizeof(struct node));
 		if (new_node == NULL)
 		{
-			fprintf(stderr, "MEmory allocation error\n");
-
-		
-		
+			fprintf(stderr, "Memory allocation error\n");
+			free_path_list(head);
+			return (NULL);
+		}
 		new_node->dir = strdup(dir);
+		if (new_node->dir == NULL)
+		{
+			fprintf(stderr, "Memory allocation error\n");
+			free_path_list(head);
+			free(new_node);
+			return (NULL);
+		}
 		new_node->next = NULL;
-
 		if (head == NULL)
 		{
 			head = new_node;
