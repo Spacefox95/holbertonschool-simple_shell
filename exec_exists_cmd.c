@@ -33,7 +33,7 @@ int find_cmd_path(char *cmd, char *work_buffer)
 	if (file_exist(cmd) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
 
-	var_path = strdup(getenv("PATH"));
+	var_path = strdup(_getenv("PATH"));
 	if (var_path == NULL)
 		return (shell_error());
 
@@ -96,12 +96,9 @@ int execute_command(char **argv)
 		if (execve(work_buffer, argv, environ) == -1)
 		{
 			free(work_buffer);
-<<<<<<< HEAD
 			return (shell_error());
-=======
 			perror("./shell");
 			exit(EXIT_FAILURE);
->>>>>>> chloe
 		}
 	}
 	else
