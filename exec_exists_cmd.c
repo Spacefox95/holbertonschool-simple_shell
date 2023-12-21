@@ -24,26 +24,40 @@ int file_exist(char *file)
  * Return: 0 if the command is found, 1 otherwise.
  */
 
-int find_cmd_path(char *cmd, char *work_buffer)
+int find_cmd_path(char *cmd, struct node *path_list, char *work_buffer)
 {
-	struct node *path_list = create_path_dir_list();
-	while (path_list != NULL)
+	struct node *current = path_list;
+
+	if (cmd[0] == '/' || strncmp(cmd, "./", 2) == 0)
 	{
-		if (sprintf(work_buffer, "%s/%s", path_list->dir, cmd) < 0)
+		if (file_exist(cmd) == EXIT_SUCCESS)
 		{
-			free_path_list(path_list);
-			return (1);
+			strcpy(work_buffer, cmd);
+			return (EXIT_SUCCESS);
 		}
-
-		if (file_exist(work_buffer) == 0)
-		{
-			return (0);
-		}
-
-		path_list = path_list->next;
+		else
+			return (EXIT_FAILURE);
 	}
 
-	return (1);
+
+	while (current != NULL) 
+	{
+		if (sprintf(work_buffer, "%s/%s", current->dir, cmd) < 0) 
+		{
+			perror("Error constructing path");
+			return EXIT_FAILURE;
+		}
+		printf("Debug: Constructed path: %s\n", work_buffer);
+
+		if (file_exist(work_buffer) == EXIT_SUCCESS) 
+		{
+			return EXIT_SUCCESS;
+		}
+
+		current = current->next;
+	}
+	return EXIT_FAILURE;
+
 }
 
 /**
@@ -59,7 +73,7 @@ int execute_command(char **argv)
 	pid_t child_pid;
 	int status;
 	char *cmd = argv[0], *work_buffer;
-
+	struct node *path_list = create_path_dir_list(_getenv("PATH"));
 	work_buffer = malloc(1024);
 	if (work_buffer == NULL)
 		return (shell_error());
@@ -69,10 +83,10 @@ int execute_command(char **argv)
 		free(work_buffer);
 		return (shell_error());
 	}
-	if (find_cmd_path(cmd, work_buffer) == EXIT_FAILURE)
+	if (find_cmd_path(cmd, path_list, work_buffer) == EXIT_FAILURE)
 	{
 		free(work_buffer);
-		perror("./shell");
+		perror("Error finding command path");
 		return (127); /* ret=127 si command not found */
 	}
 	child_pid = fork();
@@ -86,15 +100,13 @@ int execute_command(char **argv)
 		if (execve(work_buffer, argv, environ) == -1)
 		{
 			free(work_buffer);
-			return (shell_error());
-			perror("./shell");
+			perror("./shell - not found");
 			exit(EXIT_FAILURE);
 		}
 	}
-	else
-	{
-		wait(&status);
-		free(work_buffer);
-	}
-	return (EXIT_SUCCESS);
+	wait(&status);
+	free(work_buffer);
+	if (WEXITSTATUS(status))
+		status = WEXITSTATUS(status);
+	return (status);
 }

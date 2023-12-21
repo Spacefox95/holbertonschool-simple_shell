@@ -48,5 +48,7 @@ int main(int argc, char *argv[])
 		free(myargv);
 
 	} while (1);
+	free(input_buffer);
+	return (ret);
 	/* never reached */
 }

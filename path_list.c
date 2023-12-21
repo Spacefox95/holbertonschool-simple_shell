@@ -26,6 +26,7 @@ struct node *create_path_dir_list(char *path)
 {
 	struct node *head = NULL;
 	struct node *tail = NULL;
+	struct node *new_node;
 	char *token;
 
 	if (path == NULL)
@@ -36,7 +37,7 @@ struct node *create_path_dir_list(char *path)
 	token = strtok(path, ":");
 	while (token != NULL)
 	{
-		struct node *new_node = (struct node *) malloc(sizeof(struct node));
+		new_node = (struct node *) malloc(sizeof(struct node));
 		if (new_node == NULL)
 		{
 			fprintf(stderr, "Memory allocation error\n");
@@ -64,33 +65,6 @@ struct node *create_path_dir_list(char *path)
 		}
 		token = strtok(NULL, ":");
 	}
+	free_path_list(new_node);
 	return (head);
-}
-
-char *find_executable(struct node *path_list, const char *command)
-{
-	char *path;
-	
-	while (path_list != NULL) 
-	{
-		path = malloc(strlen(path_list->dir) + strlen(command) + 2);
-
-		if (path == NULL) 
-		{
-			fprintf(stderr, "Memory allocation error\n");
-			return (NULL);
-		}
-
-		sprintf(path, "%s/%s", path_list->dir, command);
-
-		if (access(path, X_OK) == 0) 
-		{
-			return (path);
-		}
-
-		free(path);
-		path_list = path_list->next;
-	}
-
-	return (NULL);
 }
