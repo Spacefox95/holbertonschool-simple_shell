@@ -25,5 +25,6 @@ char **fill_args(char *input_buffer);
 void print_env(void);
 int shell_error(void);
 char *_getenv(const char *name);
+int is_directory(char *dir);
 
 #endif
