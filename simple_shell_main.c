@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 		}
 
 		input_buffer[char_read - 1] = 0; /* overwrite \n */
-		if (strcmp(input_buffer, "env") == 0)
+		if (strncmp(input_buffer, "env", 3) == 0)
 		{
 			print_env();
 			continue;
@@ -45,7 +45,8 @@ int main(int argc, char *argv[])
 			return (ret);  /* sortie du shell avec exit */
 		}
 		myargv = fill_args(input_buffer);
-		ret = execute_command(myargv); /* ret=127 si command not found */
+		if (myargv[0] != NULL)
+			ret = execute_command(myargv); /* ret=127 si command not found */
 		free(myargv);
 
 	} while (1);
