@@ -7,14 +7,11 @@
  * Return: EXIT_SUCCESS on success, EXIT_FAILURE on failure.
  */
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	char *input_buffer = NULL, **myargv;
 	size_t size_allocated;
 	int char_read, ret = EXIT_SUCCESS;
-
-	(void) argc;
-	(void) argv;
 
 	signal(SIGINT, SIG_IGN);
 	do {
