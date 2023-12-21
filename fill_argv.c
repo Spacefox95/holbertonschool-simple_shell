@@ -16,10 +16,10 @@ char **fill_args(char *input_buffer)
 		input_buffer++;
 
 	token = strtok(input_buffer, " ");
-	while (token != NULL) 
+	while (token != NULL)
 	{
 		argv = realloc(argv, (token_count + 1) * sizeof(char *));
-		if (argv == NULL) 
+		if (argv == NULL)
 		{
 			perror("Memory allocation error");
 			exit(EXIT_FAILURE);
@@ -31,7 +31,7 @@ char **fill_args(char *input_buffer)
 	}
 
 	argv = realloc(argv, (token_count + 1) * sizeof(char *));
-	if (argv == NULL) 
+	if (argv == NULL)
 	{
 		perror("Memory allocation error");
 		exit(EXIT_FAILURE);

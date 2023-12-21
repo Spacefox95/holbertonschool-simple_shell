@@ -2,8 +2,6 @@
 
 /**
  * main - The main function of the shell.
- * @argc: number of arguments
- * @argv: arguments
  * Return: EXIT_SUCCESS on success, EXIT_FAILURE on failure.
  */
 
