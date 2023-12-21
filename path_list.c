@@ -12,6 +12,7 @@ void free_path_list(struct node *head)
 		struct node *temp = head;
 		head = head->next;
 		free(temp->dir);
+		temp->dir = NULL;
 		free(temp);
 	}
 }
@@ -42,6 +43,7 @@ struct node *create_path_dir_list(char *path)
 		{
 			fprintf(stderr, "Memory allocation error\n");
 			free_path_list(head);
+			free(token);
 			return (NULL);
 		}
 		new_node->dir = strdup(token);
@@ -50,6 +52,7 @@ struct node *create_path_dir_list(char *path)
 			fprintf(stderr, "Memory allocation error\n");
 			free_path_list(head);
 			free(new_node);
+			free(token);
 			return (NULL);
 		}
 		new_node->next = NULL;
@@ -65,5 +68,6 @@ struct node *create_path_dir_list(char *path)
 		}
 		token = strtok(NULL, ":");
 	}
+	free(token);
 	return (head);
 }

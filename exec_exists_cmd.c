@@ -32,11 +32,8 @@ int find_cmd_path(char *cmd, struct node *path_list, char *work_buffer)
 	{
 		if (file_exist(cmd) == EXIT_SUCCESS)
 		{
-			strcpy(work_buffer, cmd);
 			return (EXIT_SUCCESS);
 		}
-		else
-			return (EXIT_FAILURE);
 	}
 
 
@@ -45,18 +42,20 @@ int find_cmd_path(char *cmd, struct node *path_list, char *work_buffer)
 		if (sprintf(work_buffer, "%s/%s", current->dir, cmd) < 0) 
 		{
 			perror("Error constructing path");
-			return EXIT_FAILURE;
+			free(current);
+			return (EXIT_FAILURE);
 		}
 		printf("Debug: Constructed path: %s\n", work_buffer);
 
-		if (file_exist(work_buffer) == EXIT_SUCCESS) 
+		if (file_exist(work_buffer) == EXIT_SUCCESS)
 		{
-			return EXIT_SUCCESS;
+			return (EXIT_SUCCESS);
 		}
 
 		current = current->next;
 	}
-	return EXIT_FAILURE;
+	free(current);
+	return (EXIT_FAILURE);
 
 }
 
@@ -85,6 +84,7 @@ int execute_command(char **argv)
 	}
 	if (find_cmd_path(cmd, path_list, work_buffer) == EXIT_FAILURE)
 	{
+		free_path_list(path_list);
 		free(work_buffer);
 		perror("Error finding command path");
 		return (127); /* ret=127 si command not found */
@@ -92,6 +92,7 @@ int execute_command(char **argv)
 	child_pid = fork();
 	if (child_pid == -1)
 	{
+		free_path_list(path_list);
 		free(work_buffer);
 		return (shell_error());
 	}
@@ -99,12 +100,14 @@ int execute_command(char **argv)
 	{
 		if (execve(work_buffer, argv, environ) == -1)
 		{
+			free_path_list(path_list);
 			free(work_buffer);
 			perror("./shell - not found");
 			exit(EXIT_FAILURE);
 		}
 	}
 	wait(&status);
+	free_path_list(path_list);
 	free(work_buffer);
 	if (WEXITSTATUS(status))
 		status = WEXITSTATUS(status);

@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
 		if (isatty(STDIN_FILENO))
 			printf("\033[0;39m#simple_shell(%d)$ ", getpid());
 
+		fflush(stdin);
 		char_read = getline(&input_buffer, &size_allocated, stdin);
 		if (char_read == 1)
 			continue;
@@ -40,15 +41,12 @@ int main(int argc, char *argv[])
 		if (strncmp(input_buffer, "exit", 4) == 0)
 		{
 			free(input_buffer);
-			return (EXIT_SUCCESS);  /* sortie du shell avec exit */
+			return (ret);  /* sortie du shell avec exit */
 		}
-
 		myargv = fill_args(input_buffer);
-		ret = execute_command(myargv); /* ret=127 si command not found */
+		if (myargv[0] != NULL)
+			ret = execute_command(myargv); /* ret=127 si command not found */
 		free(myargv);
 
 	} while (1);
-	free(input_buffer);
-	return (ret);
-	/* never reached */
 }
