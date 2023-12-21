@@ -80,7 +80,7 @@ int execute_command(char **argv)
 	}
 	if (find_cmd_path(cmd, work_buffer) == EXIT_FAILURE)
 	{
-		fprintf(stderr, "./hsh: 1: %s: not found\n", cmd);
+		fprintf(stderr, "./hsh: 1: %s: not found\n", cmd);
 		free(work_buffer);
 		return (127); /* ret=127 si command not found */
 	}
@@ -94,7 +94,7 @@ int execute_command(char **argv)
 	{
 		if (execve(work_buffer, argv, environ) == -1)
 		{
-			fprintf(stderr, "./hsh: 1: %s: not found\n", cmd);
+			fprintf(stderr, "./hsh: 1: %s: not found\n", cmd);
 			free(work_buffer);
 			exit(127);
 		}
