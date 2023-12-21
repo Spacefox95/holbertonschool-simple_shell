@@ -8,6 +8,6 @@
 
 int shell_error(void)
 {
-	perror("./shell - not found");
+	perror("./hsh");
 	return (EXIT_FAILURE);
 }
