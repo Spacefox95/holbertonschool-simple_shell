@@ -1,1 +1,86 @@
-Ceci est un test
+.TH SIMPLE_SHELL 1 "HOLBERTOON_SCHOOL" "SIMPLE SHELL MANUAL"
+
+.SH NAME
+simple_shell \- command interpreter (shell)
+
+.SH SYNOPSIS
+.B ./hsh
+[\fIPID\fR] [\fIcommand_name\fR] [\fIargument...\fR]
+
+.SH DESCRIPTION
+The \fBsimple_shell\fR is a standard command interpreter for the system written in C language.
+
+.SH OVERVIEW
+The shell reads lines from a file or the terminal, interprets them, and executes other commands. The program is initiated by executing the compiled executable \fBsimple_shell_main.c\fR. The shell supports flow control constructs and line editing capabilities. It is designed for both interactive and non-interactive use, allowing direct command input or execution of commands from a file.
+
+.SH INVOCATION
+If no arguments are present and the standard input of the shell is connected to a terminal, it is considered an interactive shell. An interactive shell prompts before each command and handles errors differently. If the \fIENV\fR environment variable is set on entry to an interactive shell, the shell reads commands from the file named in \fIENV\fR.
+
+If command line arguments are specified, the first argument is treated as the name of a file from which to read commands (a shell script), and the remaining arguments are set as positional parameters. Otherwise, the shell reads commands from its standard input.
+
+.SH LEXICAL STRUCTURE
+The shell reads input in lines, breaks it into words at whitespace, and recognizes certain character sequences called "operators." Operators implemented in this simple shell include:
+
+.B |
+.PP
+.SH QUOTING
+Quoting is used to remove the special meaning of certain characters or words to the shell, such as operators, whitespace, or keywords. Three types of quoting are supported: matched single quotes, matched double quotes, and backslash.
+
+.B Backslash
+A backslash preserves the literal meaning of the following character.
+
+.B Single Quotes
+Enclosing characters in single quotes preserves their literal meaning, except for single quotes themselves.
+
+.B Double Quotes
+Enclosing characters within double quotes preserves their literal meaning, except for $, `, and \. The backslash inside double quotes quotes only $, `, ", and \.
+
+.SH RESERVED WORDS
+Reserved words have special meaning to the shell and are recognized at the beginning of a line or after a control operator.
+
+.B ./hsh
+
+.SH COMMANDS
+The shell interprets words according to a language, specified in the POSIX 1003.2 document. A simple command is recognized when the first word of the line (or after a control operator) is not a reserved word. The shell searches for and executes shell functions, built-in commands, and normal programs based on the command type.
+
+.SH SIMPLE COMMANDS
+When a simple command is recognized, the shell performs the following actions:
+
+.IP 1.
+Leading words of the form "name=value" are stripped off and assigned to the environment of the simple command. Redirection operators and their arguments are stripped off and saved for processing.
+
+.IP 2.
+The remaining words are expanded, and the first remaining word is considered the command name. The command is located, and the remaining words become the arguments. If no command name is found, "name=value" variable assignments affect the current shell.
+
+.SH SEARCH AND EXECUTION
+Shell functions and built-in commands are executed internally. For normal programs, the shell searches the file system for the command. If a match is found, the program is executed with arguments and the environment. If the program is not a normal executable file (lacking a shebang), the shell interprets it in a subshell.
+
+.SH PATH SEARCH
+The shell looks for shell functions, built-in commands, and normal programs in that order. Command names containing a slash are executed without searches. The shell searches each entry in the \fIPATH\fR variable for non-slash commands.
+
+.SH COMMAND EXIT STATUS
+Each command has an exit status: zero for success and non-zero for failure or error. Shell functions, built-in commands, and normal programs have different execution methods.
+
+.SH PIPELINES
+A pipeline is a sequence of commands separated by the \fI|\fR operator. The standard output of all but the last command is connected to the standard input of the next command. The exit status of the last command determines the pipeline's exit status.
+
+.SH EXIT STATUS
+Shell errors cause a non-zero exit status. If the shell is non-interactive, execution of the shell file is aborted. Otherwise, the shell returns the exit status of the last command or, if the \fIexit\fR builtin is used with a numeric argument, it returns the argument.
+
+.SH ENVIRONMENT VARIABLES
+.B PATH
+The default search path for executables.
+
+.SH HISTORY
+A \fBsh\fR command appeared in Version 1 AT&T UNIX. It was, however, unmaintainable, so this simple shell was developed.
+
+.SH BUGS
+Setuid shell scripts should be avoided due to significant security risks. \fIPS1\fR, \fIPS2\fR, and \fIPS4\fR should be subject to parameter expansion before being displayed.
+
+.SH AUTHOR
+This function was produced by Chloé Correia, Jonathan Ismael and Nathan Raynal during a group project for Holberton School (Toulouse) in 2023.
+.SH COPYRIGHT
+Holberton School property.
+.PP
+.nr y 1900+\n(yr
+Date is: \n(mo  \n(dy, \ny
