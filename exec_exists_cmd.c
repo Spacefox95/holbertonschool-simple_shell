@@ -35,7 +35,7 @@ int find_cmd_path(char *cmd, char *work_buffer)
 
 	var_path = strdup(_getenv("PATH"));
 	if (var_path == NULL)
-		return (shell_error(NULL, errno));
+		return (shell_error());
 
 	token = strtok(var_path, ":");
 	while (token)
@@ -71,31 +71,31 @@ int execute_command(char **argv)
 
 	work_buffer = malloc(1024);
 	if (work_buffer == NULL)
-		return (shell_error(NULL, errno));
+		return (shell_error());
 
 	if (strcpy(work_buffer, cmd) != work_buffer) /*init avec valeur reçue*/
 	{
 		free(work_buffer);
-		return (shell_error(cmd, errno));
+		return (shell_error());
 	}
 	if (find_cmd_path(cmd, work_buffer) == EXIT_FAILURE)
 	{
 		free(work_buffer);
-		shell_error(cmd, 127);
+		perror("./shell - not found");
 		return (127); /* ret=127 si command not found */
 	}
 	child_pid = fork();
 	if (child_pid == -1)
 	{
 		free(work_buffer);
-		return (shell_error(NULL, errno));
+		return (shell_error());
 	}
 	if (child_pid == 0)
 	{
 		if (execve(work_buffer, argv, environ) == -1)
 		{
-			shell_error(cmd, 127);
 			free(work_buffer);
+			perror("./shell - not found");
 			exit(127);
 		}
 		exit(EXIT_FAILURE);
@@ -106,4 +106,3 @@ int execute_command(char **argv)
 		status = WEXITSTATUS(status);
 	return (status);
 }
-
