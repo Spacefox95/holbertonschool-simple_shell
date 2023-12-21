@@ -65,6 +65,5 @@ struct node *create_path_dir_list(char *path)
 		}
 		token = strtok(NULL, ":");
 	}
-	free_path_list(new_node);
 	return (head);
 }

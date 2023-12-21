@@ -32,12 +32,12 @@ int main(int argc, char *argv[])
 		}
 
 		input_buffer[char_read - 1] = 0; /* overwrite \n */
-		if (strcmp(input_buffer, "env") == 0)
+		if (strncmp(input_buffer, "env", 3) == 0)
 		{
 			print_env();
 			continue;
 		}
-		if (strcmp(input_buffer, "exit") == 0)
+		if (strncmp(input_buffer, "exit", 4) == 0)
 		{
 			free(input_buffer);
 			return (EXIT_SUCCESS);  /* sortie du shell avec exit */
