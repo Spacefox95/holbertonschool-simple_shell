@@ -6,23 +6,37 @@
  * Return: The number of arguments filled into the array.
  */
 
-
 char **fill_args(char *input_buffer)
 {
-	int i = 0;
 	char *token;
 	char **argv = NULL;
+	int token_count = 0;
 
-	token = strtok(input_buffer, " \t\r\n");
-	while (token)
+	while (*input_buffer == ' ' || *input_buffer == '\t')
+		input_buffer++;
+
+	token = strtok(input_buffer, " ");
+	while (token != NULL) 
 	{
-		argv = realloc(argv, (i + 1) * sizeof(char *));
-		argv[i] = token;
+		argv = realloc(argv, (token_count + 1) * sizeof(char *));
+		if (argv == NULL) 
+		{
+			perror("Memory allocation error");
+			exit(EXIT_FAILURE);
+		}
+
+		argv[token_count] = token;
 		token = strtok(NULL, " \t\r\n");
-		i++;
+		token_count++;
 	}
 
-	argv = realloc(argv, (i + 1) * sizeof(char *));
-	argv[i] = NULL;
+	argv = realloc(argv, (token_count + 1) * sizeof(char *));
+	if (argv == NULL) 
+	{
+		perror("Memory allocation error");
+		exit(EXIT_FAILURE);
+	}
+
+	argv[token_count] = NULL;
 	return (argv);
 }

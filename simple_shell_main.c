@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 			print_env();
 			continue;
 		}
-		if (strcmp(input_buffer, "exit") == 0)
+		if (strncmp(input_buffer, "exit", 4) == 0)
 		{
 			free(input_buffer);
 			return (ret);  /* sortie du shell avec exit */
