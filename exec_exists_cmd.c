@@ -30,12 +30,6 @@ int find_cmd_path(char *cmd, char *work_buffer)
 	char *token;
 	char *var_path;
 
-	if (is_directory(cmd) == EXIT_SUCCESS)
-		return (EXIT_SUCCESS);
-
-	if (file_exist(cmd) == EXIT_SUCCESS)
-		return (EXIT_FAILURE);
-
 	if (file_exist(cmd) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
 
@@ -62,25 +56,6 @@ int find_cmd_path(char *cmd, char *work_buffer)
 	free(var_path);
 	return (EXIT_FAILURE);
 }
-
-/**
- * is_directory - Checks if parameter is a dicrectory.
- * @dir: The name of the file to check.
- * Return: EXIT_SUCCESS if dir is a directory, EXIT_FAILURE otherwise.
- */
-
-int is_directory(char *dir)
-{
-	struct stat st;
-
-	if (stat(dir, &st) == 0)
-	{
-		if (S_ISDIR(st.st_mode) == 1)
-			return (EXIT_SUCCESS);
-	}
-	return (EXIT_FAILURE);
-}
-
 /**
  * execute_command - Executes a command.
  * @argv: The array of arguments for the command.
