@@ -35,7 +35,7 @@ int find_cmd_path(char *cmd, char *work_buffer)
 
 	var_value_path = _getenv("PATH");
 	if (var_value_path == NULL)
-		return (shell_error());
+		return (EXIT_FAILURE);
 
 	var_path = strdup(var_value_path);
 	if (var_path == NULL)
