@@ -4,7 +4,8 @@
 
 This is a custom implementation of a "simple shell" in C, created as part of the Holberton School curriculum. 
 The project includes a set of functions 
-## Files
+
+## :file_folder: Files
 
 - `main.h`: Header file containing function prototypes and necessary includes.
 - `simple_shell_main.c`: The main function of the shell.
@@ -20,7 +21,7 @@ The project includes a set of functions
 `execve`, `exit`, `fflush`, `fork`, `free`, `getline`, `getpid`, `isatty`, `malloc`, `perror`, `printf`, `fprintf`, `sprintf`, `putchar`, `signal`, `stat`, `strtok`, `wait`, `write`
 
 ##Environment
-
+:--------------------------------------------------: |
 Language: C
 OS: Ubuntu 20.04 LTS
 Compiler: gcc
@@ -28,7 +29,7 @@ Style guidelines: Betty style
 
 ## Usage
 
-To use the custom `simple_shell` programm, include the `main.h` header file in your program and compile all the files associated. Then run the exectuable `./hsh`in our case so you enter in this simple shell. Then, you can use it as a normal shell. Moreover, this programm handle arguments commands such as *ls -l*, and also works in non-interactive (but be cautious, it only works with | for now).
+To use the custom `simple_shell` programm, include the `main.h` header file in your program and compile all the files associated. Then run the exectuable `./hsh`in our case so you enter in this simple shell. Then, you can use it as a normal shell. Moreover, this programm handles arguments commands such as *ls -l*, and also works in non-interactive (but be cautious, it only works with | for now).
 ```c
 ./hsh
 #simple_shell(*current_pid*)$
@@ -43,7 +44,7 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 ``` bash
 man ./man_1_simple_shell
 ```
-### Examples
+### :floppy_disk: Examples
 
 Display the list of directory content:
 ```
