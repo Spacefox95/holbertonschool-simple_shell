@@ -30,16 +30,23 @@ int find_cmd_path(char *cmd, char *work_buffer)
 	char *token;
 	char *var_path, *var_value_path;
 
-	if (file_exist(cmd) == EXIT_SUCCESS)
+	/*
+	 *	Ne chercher si existe que dans les cas où commande commence par / ou ./
+	 *	Si c'est le cas : chemin absolu, ne pas passer par PATH
+	 */
+	if ((cmd[0] == '/' || strncmp(cmd, "./", 2) == 0) &&
+			file_exist(cmd) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
 
 	var_value_path = _getenv("PATH");
-	if (var_value_path == NULL)
-		return (shell_error());
+	if (var_value_path == NULL)  /* si pas de variable PATH : unset PATH */
+		return (EXIT_FAILURE);
+	if (strlen(var_value_path) == 0)	/* si PATH= */
+		return (EXIT_FAILURE);
 
 	var_path = strdup(var_value_path);
 	if (var_path == NULL)
-		return (shell_error());
+		return (EXIT_FAILURE);
 
 	token = strtok(var_path, ":");
 	while (token)
