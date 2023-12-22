@@ -28,14 +28,25 @@ int file_exist(char *file)
 int find_cmd_path(char *cmd, char *work_buffer)
 {
 	char *token;
-	char *var_path;
+	char *var_path, *var_value_path;
 
-	if (file_exist(cmd) == EXIT_SUCCESS)
+	/*
+	 *	Ne chercher si existe que dans les cas où commande commence par / ou ./
+	 *	Si c'est le cas : chemin absolu, ne pas passer par PATH
+	 */
+	if ((cmd[0] == '/' || strncmp(cmd, "./", 2) == 0) &&
+			file_exist(cmd) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
 
-	var_path = strdup(_getenv("PATH"));
+	var_value_path = _getenv("PATH");
+	if (var_value_path == NULL)  /* si pas de variable PATH : unset PATH */
+		return (EXIT_FAILURE);
+	if (strlen(var_value_path) == 0)	/* si PATH= */
+		return (EXIT_FAILURE);
+
+	var_path = strdup(var_value_path);
 	if (var_path == NULL)
-		return (shell_error());
+		return (EXIT_FAILURE);
 
 	token = strtok(var_path, ":");
 	while (token)
@@ -56,7 +67,6 @@ int find_cmd_path(char *cmd, char *work_buffer)
 	free(var_path);
 	return (EXIT_FAILURE);
 }
-
 /**
  * execute_command - Executes a command.
  * @argv: The array of arguments for the command.
@@ -80,8 +90,8 @@ int execute_command(char **argv)
 	}
 	if (find_cmd_path(cmd, work_buffer) == EXIT_FAILURE)
 	{
+		fprintf(stderr, "./hsh: 1: %s: not found\n", cmd);
 		free(work_buffer);
-		perror("./shell - not found");
 		return (127); /* ret=127 si command not found */
 	}
 	child_pid = fork();
@@ -94,8 +104,8 @@ int execute_command(char **argv)
 	{
 		if (execve(work_buffer, argv, environ) == -1)
 		{
+			fprintf(stderr, "./hsh: 1: %s: not found\n", cmd);
 			free(work_buffer);
-			perror("./shell - not found");
 			exit(127);
 		}
 		exit(EXIT_FAILURE);
