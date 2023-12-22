@@ -12,27 +12,26 @@ char **fill_args(char *input_buffer)
 	char **argv = NULL;
 	int token_count = 0;
 
+	/* ignore heading spaces and tabs */
 	while (*input_buffer == ' ' || *input_buffer == '\t')
-		/* Go to the command input */
 		input_buffer++;
 
-	token = strtok(input_buffer, " "); /* Separate input into tokens */
+	token = strtok(input_buffer, " ");
 	while (token != NULL)
 	{
+		/* get contiguous memory allocation simplifies code/freeing process */
 		argv = realloc(argv, (token_count + 1) * sizeof(char *));
-		/* Allocate memory to save token */
 		if (argv == NULL)
 		{
 			perror("Memory allocation error");
 			exit(EXIT_FAILURE);
 		}
 
-		argv[token_count] = token; /* Save token in argv */
-		token = strtok(NULL, " \t\r\n");
-		/* Free the token so it can check the next input */
+		argv[token_count] = token;
+		token = strtok(NULL, " ");
 		token_count++;
 	}
-
+	/* alloc for end of argv NULL */
 	argv = realloc(argv, (token_count + 1) * sizeof(char *));
 	if (argv == NULL)
 	{
