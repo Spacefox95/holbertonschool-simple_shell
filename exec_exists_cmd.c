@@ -29,16 +29,16 @@ int find_cmd_path(char *cmd, char *work_buffer)
 {
 	char *token;
 	char *var_path, *var_value_path;
-	/* Look for file exist if command starts with "/" or "./" or "../"*/
-	/* If so, abslute path, no need to check the PATH. */
+	/* Look if file exists only if command starts with "/" or "./" or "../"*/
+	/* If so, absolute path, no need to check the PATH. */
 	if ((cmd[0] == '/' || strncmp(cmd, "./", 2) == 0 ||
-				strncmp(cmd, "../", 3) == 0) && file_exist(cmd) == EXIT_SUCCESS)
+		strncmp(cmd, "../", 3) == 0) && file_exist(cmd) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
 
 	var_value_path = _getenv("PATH");
-	if (var_value_path == NULL)  /* If no PATH variable : unset PATH */
+	if (var_value_path == NULL)  /* If no PATH variable: like if PATH was unset */
 		return (EXIT_FAILURE);
-	if (strlen(var_value_path) == 0)	/* if PATH= */
+	if (strlen(var_value_path) == 0)/* if PATH= , defined but empty*/
 		return (EXIT_FAILURE);
 
 	var_path = strdup(var_value_path);
@@ -49,12 +49,11 @@ int find_cmd_path(char *cmd, char *work_buffer)
 	while (token)
 	{
 		if (sprintf(work_buffer, "%s/%s", token, cmd) < 0)
-		/* Print the path associated to the command */
 		{
 			free(var_path);
 			return (EXIT_FAILURE);
 		}
-
+		/*test if current PATH path+cmd exists*/
 		if (file_exist(work_buffer) == EXIT_SUCCESS)
 		{
 			free(var_path);
@@ -80,8 +79,8 @@ int execute_command(char **argv)
 	work_buffer = malloc(1024);
 	if (work_buffer == NULL)
 		return (shell_error());
-
-	if (strcpy(work_buffer, cmd) != work_buffer) /*init avec valeur reçue*/
+	/* init with received value cmd=argv[0] */
+	if (strcpy(work_buffer, cmd) != work_buffer)
 	{
 		free(work_buffer);
 		return (shell_error());
@@ -90,7 +89,7 @@ int execute_command(char **argv)
 	{
 		fprintf(stderr, "./hsh: 1: %s: not found\n", cmd);
 		free(work_buffer);
-		return (127); /* ret=127 si command not found */
+		return (127);
 	}
 	child_pid = fork();
 	if (child_pid == -1)
@@ -111,7 +110,6 @@ int execute_command(char **argv)
 	wait(&status);
 	free(work_buffer);
 	if (WIFEXITED(status))
-		status = WEXITSTATUS(status);
+		status = WEXITSTATUS(status); /* status of child */
 	return (status);
 }
-
