@@ -15,9 +15,20 @@ The project includes a set of functions
 - `shell_errors.c`: Implementation of supporting function for errors.
 - `man_1_simple_shell`: Manual page for the custom `simple_shell` programm.
 
+##Functions and system calls used
+
+`execve`, `exit`, `fflush`, `fork`, `free`, `getline`, `getpid`, `isatty`, `malloc`, `perror`, `printf`, `fprintf`, `sprintf`, `putchar`, `signal`, `stat`, `strtok`, `wait`, `write`
+
+##Environment
+
+Language: C
+OS: Ubuntu 20.04 LTS
+Compiler: gcc
+Style guidelines: Betty style
+
 ## Usage
 
-To use the custom `simple_shell` programm, include the `main.h` header file in your program and compile all the files associated. Then run the exectuable `./hsh`in our case so you enter in this simple shell. Then, you can use it as a normal shell. Moreover, this programm handle arguments commands such as *ls -l*, and also works in non-interactive.
+To use the custom `simple_shell` programm, include the `main.h` header file in your program and compile all the files associated. Then run the exectuable `./hsh`in our case so you enter in this simple shell. Then, you can use it as a normal shell. Moreover, this programm handle arguments commands such as *ls -l*, and also works in non-interactive (but be cautious, it only works with | for now).
 ```c
 ./hsh
 #simple_shell(*current_pid*)$
@@ -30,7 +41,7 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 
 ### Man page
 ``` bash
-man ./man_1simple_shell
+man ./man_1_simple_shell
 ```
 ### Examples
 
