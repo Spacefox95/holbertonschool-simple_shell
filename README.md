@@ -20,7 +20,7 @@ The project includes a set of functions
 
 `execve`, `exit`, `fflush`, `fork`, `free`, `getline`, `getpid`, `isatty`, `malloc`, `perror`, `printf`, `fprintf`, `sprintf`, `putchar`, `signal`, `stat`, `strtok`, `wait`, `write`
 
-##Environment
+Environment
 :--------------------------------------------------: |
 Language: C
 OS: Ubuntu 20.04 LTS

@@ -29,7 +29,8 @@ int find_cmd_path(char *cmd, char *work_buffer)
 {
 	char *token;
 	char *var_path, *var_value_path;
-	/* Look for file exist only if command starts with "/" or "./" or "../". If so, abslute path, no need to check the PATH. */
+	/* Look for file exist if command starts with "/" or "./" or "../"*/
+	/* If so, abslute path, no need to check the PATH. */
 	if ((cmd[0] == '/' || strncmp(cmd, "./", 2) == 0 ||
 				strncmp(cmd, "../", 3) == 0) && file_exist(cmd) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
@@ -47,7 +48,8 @@ int find_cmd_path(char *cmd, char *work_buffer)
 	token = strtok(var_path, ":");
 	while (token)
 	{
-		if (sprintf(work_buffer, "%s/%s", token, cmd) < 0) /* Print the path associated to the command */
+		if (sprintf(work_buffer, "%s/%s", token, cmd) < 0)
+		/* Print the path associated to the command */
 		{
 			free(var_path);
 			return (EXIT_FAILURE);

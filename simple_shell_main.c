@@ -14,10 +14,12 @@ int main(void)
 	signal(SIGINT, SIG_IGN); /* Ignore the signal of process */
 	do {
 		if (isatty(STDIN_FILENO)) /* Check interactive mode */
-			printf("\033[0;39m#simple_shell(%d)$ ", getpid()); /* Display the prompt and the current process */
+			printf("\033[0;39m#simple_shell(%d)$ ", getpid());
+		/* Display the prompt and the current process */
 
 		fflush(stdin); /* Update stream */
-		char_read = getline(&input_buffer, &size_allocated, stdin); /* Read the line from stream */
+		char_read = getline(&input_buffer, &size_allocated, stdin);
+		/* Read the line from stream */
 		if (char_read == 1)
 			continue;
 		if (char_read == EOF)
@@ -41,8 +43,8 @@ int main(void)
 		}
 		myargv = fill_args(input_buffer); /* Tokenize the input buffer */
 		if (myargv[0] != NULL)
-			ret = execute_command(myargv); /* Execute the command associated to the token or ret=127 if command not found */
+			ret = execute_command(myargv);
+		/* Execute the command associated to the token */
 		free(myargv);
-
 	} while (1);
 }
