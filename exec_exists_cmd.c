@@ -28,12 +28,16 @@ int file_exist(char *file)
 int find_cmd_path(char *cmd, char *work_buffer)
 {
 	char *token;
-	char *var_path;
+	char *var_path, *var_value_path;
 
 	if (file_exist(cmd) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
 
-	var_path = strdup(_getenv("PATH"));
+	var_value_path = _getenv("PATH");
+	if (var_value_path == NULL)
+		return (shell_error());
+
+	var_path = strdup(var_value_path);
 	if (var_path == NULL)
 		return (shell_error());
 
@@ -105,3 +109,4 @@ int execute_command(char **argv)
 		status = WEXITSTATUS(status);
 	return (status);
 }
+
