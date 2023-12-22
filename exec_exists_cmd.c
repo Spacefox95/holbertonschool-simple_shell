@@ -31,11 +31,12 @@ int find_cmd_path(char *cmd, char *work_buffer)
 	char *var_path, *var_value_path;
 
 	/*
-	 *	Ne chercher si existe que dans les cas où commande commence par / ou ./
+	 *	Ne chercher si existe que dans les cas où commande commence
+	 *	par / ou ./ ou ../
 	 *	Si c'est le cas : chemin absolu, ne pas passer par PATH
 	 */
-	if ((cmd[0] == '/' || strncmp(cmd, "./", 2) == 0) &&
-			file_exist(cmd) == EXIT_SUCCESS)
+	if ((cmd[0] == '/' || strncmp(cmd, "./", 2) == 0 ||
+				strncmp(cmd, "../", 3) == 0) && file_exist(cmd) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
 
 	var_value_path = _getenv("PATH");
