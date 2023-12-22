@@ -1,6 +1,8 @@
 #ifndef SIMPLE_SHELL
 #define SIMPLE_SHELL
 
+/* LIBRARIES */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

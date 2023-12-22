@@ -11,13 +11,13 @@ int main(void)
 	size_t size_allocated;
 	int char_read, ret = EXIT_SUCCESS;
 
-	signal(SIGINT, SIG_IGN);
+	signal(SIGINT, SIG_IGN); /* Ignore the signal of process */
 	do {
-		if (isatty(STDIN_FILENO))
-			printf("\033[0;39m#simple_shell(%d)$ ", getpid());
+		if (isatty(STDIN_FILENO)) /* Check interactive mode */
+			printf("\033[0;39m#simple_shell(%d)$ ", getpid()); /* Display the prompt and the current process */
 
-		fflush(stdin);
-		char_read = getline(&input_buffer, &size_allocated, stdin);
+		fflush(stdin); /* Update stream */
+		char_read = getline(&input_buffer, &size_allocated, stdin); /* Read the line from stream */
 		if (char_read == 1)
 			continue;
 		if (char_read == EOF)
@@ -25,11 +25,11 @@ int main(void)
 			free(input_buffer);
 			if (isatty(STDIN_FILENO))
 				putchar('\n');
-			return (ret);   /* sortie du shell Ctrl-D */
+			return (ret);   /* Exit shell with Ctrl-D */
 		}
 
-		input_buffer[char_read - 1] = 0; /* overwrite \n */
-		if (strncmp(input_buffer, "env", 3) == 0)
+		input_buffer[char_read - 1] = 0; /* Overwrite \n */
+		if (strncmp(input_buffer, "env", 3) == 0) /* Print the environnement */
 		{
 			print_env();
 			continue;
@@ -37,11 +37,11 @@ int main(void)
 		if (strncmp(input_buffer, "exit", 4) == 0)
 		{
 			free(input_buffer);
-			return (ret);  /* sortie du shell avec exit */
+			return (ret);  /* Exit the shell with "exit" */
 		}
-		myargv = fill_args(input_buffer);
+		myargv = fill_args(input_buffer); /* Tokenize the input buffer */
 		if (myargv[0] != NULL)
-			ret = execute_command(myargv); /* ret=127 si command not found */
+			ret = execute_command(myargv); /* Execute the command associated to the token or ret=127 if command not found */
 		free(myargv);
 
 	} while (1);
